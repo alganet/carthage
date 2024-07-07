@@ -1,0 +1,31 @@
+# Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+# SPDX-License-Identifier: ISC
+
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          set -x
+          wget https://github.com/jart/cosmopolitan/raw/master/build/bootstrap/ape.elf
+          sudo cp ape.elf /usr/bin/ape
+          sudo chmod +x /usr/bin/ape
+          sudo sh -c "echo ':APE:M::MZqFpD::/usr/bin/ape:' >/proc/sys/fs/binfmt_misc/register"
+      - run: sudo apt-get install -y byacc re2c
+      - run: sh carthage.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: target_bin
+          path: target/bin/**
+
