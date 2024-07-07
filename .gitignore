@@ -1,6 +1,6 @@
-cosmocc
-ph7
-php
-target
+/cosmocc
+/ph7
+/php
+/target
 *.zip
 *.gz

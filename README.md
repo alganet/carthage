@@ -5,10 +5,16 @@ carthage uses the [cosmopolitan libc][cosmo] to build [αcτµαlly pδrταblε
 
 We offer two flavors:
 
- - The latest official [PHP][php], compiled barebones (`--disable-all`) **~13MB ape**
  - The embedded [PH7][PH7] engine. **~2MB ape**
+ - The latest official [PHP][php]. **~30MB ape**
 
 Please note that _BOTH BUILDS ARE EXPERIMENTAL_.
+
+### Extensions
+
+PH7 has no extensions, Zend PHP is built with these enabled:
+
+ - ctype filter fileinfo ftp gmp pcntl posix session sockets tokenizer
 
 ### Building Locally
 

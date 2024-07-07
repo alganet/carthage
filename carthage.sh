@@ -52,7 +52,7 @@ export PKG_CONFIG="pkg-config --with-path=$PWD/cosmocc/lib/pkgconfig"
 export INSTALL="cosmoinstall"
 export AR="cosmoar"
 
-if ! test -f target/bin/ph7
+if ! test -f target/bin/ph7-2.1.4
 then
     cd ph7
     $CC -o ph7 ph7.c examples/ph7_interp.c -W -Wunused -Wall -I.
@@ -61,11 +61,28 @@ then
 cd ..
 fi
 
-if ! test -f target/bin/php
+if ! test -f target/bin/php-8.3.9
 then
     cd php
+
+    patch -Np0 -i ../patches/php-8.3.9/cosmo-multicast.patch
+
     ./buildconf --force
-    ./configure --prefix=$PWD/../target --disable-all --disable-shared --disable-fiber-asm
+    ./configure --prefix=$PWD/../target \
+        --disable-all \
+        --disable-shared \
+        --disable-fiber-asm \
+        --enable-ctype \
+        --enable-filter \
+        --enable-fileinfo \
+        --enable-ftp \
+        --enable-gmp \
+        --enable-pcntl \
+        --enable-posix \
+        --enable-session \
+        --enable-sockets \
+        --enable-tokenizer
+
     make -j $(nproc)
     make install-cli install-phpdbg
     mv ../target/bin/php ../target/bin/php-8.3.9

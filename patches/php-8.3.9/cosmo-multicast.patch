@@ -1,0 +1,49 @@
+# Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+# SPDX-License-Identifier: ISC
+
+--- ext/sockets/multicast.h.orig	2024-07-07 10:15:00.221335337 -0300
++++ ext/sockets/multicast.h	2024-07-07 10:15:03.599347501 -0300
+@@ -14,11 +14,11 @@
+    +----------------------------------------------------------------------+
+  */
+ 
+-#if defined(MCAST_JOIN_GROUP) && !defined(__APPLE__)
++#if defined(MCAST_JOIN_GROUP) && !defined(__APPLE__) && !defined(__COSMOCC__)
+ # define RFC3678_API 1
+ /* has block/unblock and source membership, in this case for both IPv4 and IPv6 */
+ # define HAS_MCAST_EXT 1
+-#elif defined(IP_ADD_SOURCE_MEMBERSHIP) && !defined(__APPLE__)
++#elif defined(IP_ADD_SOURCE_MEMBERSHIP) && !defined(__APPLE__) && !defined(__COSMOCC__)
+ /* has block/unblock and source membership, but only for IPv4 */
+ # define HAS_MCAST_EXT 1
+ #endif
+
+--- ext/sockets/multicast.c.orig	2024-07-07 09:19:04.467193555 -0300
++++ ext/sockets/multicast.c	2024-07-07 10:01:31.563897681 -0300
+@@ -722,7 +722,7 @@
+ #define ifr_ifindex ifr_index
+ #endif
+ 
+-#if defined(SIOCGIFNAME)
++#if defined(SIOCGIFNAME) || defined(__COSMOCC__)
+ 	if_req.ifr_ifindex = if_index;
+ 	if (ioctl(php_sock->bsd_socket, SIOCGIFNAME, &if_req) == -1) {
+ #elif defined(HAVE_IF_INDEXTONAME)
+@@ -801,7 +801,7 @@
+ 		if ((((struct sockaddr*)&cur_req.ifr_addr)->sa_family == AF_INET) &&
+ 				(((struct sockaddr_in*)&cur_req.ifr_addr)->sin_addr.s_addr ==
+ 					addr->s_addr)) {
+-#if defined(SIOCGIFINDEX)
++#if defined(SIOCGIFINDEX)|| defined(__COSMOCC__)
+ 			if (ioctl(php_sock->bsd_socket, SIOCGIFINDEX, (char*)&cur_req)
+ 					== -1) {
+ #elif defined(HAVE_IF_NAMETOINDEX)
+@@ -815,7 +815,7 @@
+ 					errno);
+ 				goto err;
+ 			} else {
+-#if defined(SIOCGIFINDEX)
++#if defined(SIOCGIFINDEX) || defined(__COSMOCC__)
+ 				*if_index = cur_req.ifr_ifindex;
+ #else
+ 				*if_index = index_tmp;
